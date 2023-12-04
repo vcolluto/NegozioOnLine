@@ -10,6 +10,8 @@ public class Negozio {
 		put("AL003",new Prodotto("AL003","Biscotti",4.20f,10));
 		put("CAS001",new Prodotto("CAS001","Spugne",0.80f,5));
 	}};
+	
+	private Carrello carrello=new Carrello();
 
 	//costruttore (situazione iniziale)
 	public Negozio() {
@@ -44,4 +46,15 @@ public class Negozio {
 		return esito;
 	}
 	
+	
+	public boolean aggiungiAlCarrello(String codice, int quantità) {		
+		boolean esito=false;
+		if (elencoProdotti.containsKey(codice) && 				//se esiste il prodotto con quel codice
+			elencoProdotti.get(codice).getQuantitàDisponibile()>=quantità)	//e la quantità è sufficiente				 	
+		{
+			carrello.aggiungiProdotto(codice, quantità);
+			esito=true;
+		}
+		return esito;
+	}
 }
