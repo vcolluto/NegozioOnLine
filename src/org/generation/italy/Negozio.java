@@ -36,8 +36,9 @@ public class Negozio {
 		boolean esito=false;
 		if (elencoProdotti.containsKey(codice)) 	//se esiste il prodotto con quel codice
 		{
-			elencoProdotti.get(codice).setSconto(sconto);
-			esito=true;
+		/*	if (elencoProdotti.get(codice).setSconto(sconto))
+				esito=true;*/
+			esito=elencoProdotti.get(codice).setSconto(sconto);
 		}
 		
 		return esito;
