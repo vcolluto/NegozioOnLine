@@ -60,6 +60,12 @@ public class Prodotto {
 		if (quantitàDisponibile>0)
 			this.quantitàDisponibile = quantitàDisponibile;
 	}
+
+	@Override
+	public String toString() {		//genera una stringa contenente tutti i dati del prodotto
+		return "Prodotto [codice=" + codice + ", descrizione=" + descrizione + ", prezzo=" + prezzo + ", sconto="
+				+ sconto + ", quantitàDisponibile=" + quantitàDisponibile + "]";
+	}
 	
 	
 	
