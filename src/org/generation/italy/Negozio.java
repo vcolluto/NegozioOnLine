@@ -35,7 +35,10 @@ public class Negozio {
 	public boolean applicaSconto(String codice, float sconto) {
 		boolean esito=false;
 		if (elencoProdotti.containsKey(codice)) 	//se esiste il prodotto con quel codice
+		{
 			elencoProdotti.get(codice).setSconto(sconto);
+			esito=true;
+		}
 		
 		return esito;
 	}

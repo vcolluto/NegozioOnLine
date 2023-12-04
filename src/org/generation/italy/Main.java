@@ -44,7 +44,7 @@ public class Main {
 		
 		
 		do {
-			System.out.println("\n\n\n\n\n\nBenvenuto nel mio negozio!");
+			System.out.println("\n\n\n\n\n\n\n\n\n\n\n\nBenvenuto nel mio negozio!");
 			
 			System.out.println("1 - Visualizza prodotti");
 			System.out.println("2 - Inserisci prodotto");
@@ -93,6 +93,8 @@ public class Main {
 				System.out.println("Scelta non valida!");
 				break;
 			}
+			System.out.println("Premi Enter per continuare...");
+			sc.nextLine();
 			
 		} while (!scelta.equals("9"));
 
