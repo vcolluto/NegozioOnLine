@@ -1,11 +1,13 @@
 package org.generation.italy;
 
 import java.util.HashMap;
+import java.util.Iterator;
 
 
 
 public class Negozio {	
-	public HashMap<String, Prodotto> elencoProdotti= new HashMap<String, Prodotto>(){{
+	
+	private HashMap<String, Prodotto> elencoProdotti= new HashMap<String, Prodotto>(){{
 		put("AL001",new Prodotto("AL001","Pane",3.70f,100));
 		put("AL002",new Prodotto("AL002","Pasta",1.50f,200));
 		put("AL003",new Prodotto("AL003","Biscotti",4.20f,10));
@@ -19,6 +21,7 @@ public class Negozio {
 
 	//costruttore (situazione iniziale)
 	public Negozio() {
+		//metodo alternativo per inizializzare l'hashmap:
 		Prodotto p=new Prodotto("CAS002","Detersivo piatti",1.90f,12);
 		elencoProdotti.put(p.getCodice(), p); //il codice (chiave dell'hashmap) lo prendo direttamente dal prodotto
 			
@@ -65,4 +68,23 @@ public class Negozio {
 	public Carrello getCarrello() {
 		return carrello;
 	}
+
+	public Iterable<Prodotto> getElencoProdotti() {	//non restituisco direttamente l'hasmap, ma un "iteratore di prodotti"
+		return new Iterable<Prodotto>() {			
+			@Override
+			public Iterator<Prodotto> iterator() {				
+				return elencoProdotti.values().iterator();
+			}
+		};
+	}
+	
+	public boolean esisteProdotto(String codice) {
+		return elencoProdotti.containsKey(codice);
+	}
+	
+	public Prodotto getProdotto(String codice) {
+		return elencoProdotti.get(codice);
+	}
+	
+	
 }

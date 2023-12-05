@@ -42,7 +42,42 @@ public class Main {
 		float prezzo, sconto;
 		int quantità;
 		
+		//  negozio.elencoProdotti=null;		//utilizzo inappropriato dell'elenco prodotti
 		
+		
+		/* 
+		 * Problema:
+		 * 
+		 * necessità di scorrere i prodotti del negozio (hashmap), 
+		 * ma se si "espone" l'hashmap questa può essere utilizzata impropriamente
+		 * (ad esempio si possono aggiungere dei prodotti bypassando i controlli 
+		 * che ci sono sul metodo "inserisciProdotto") 
+		 * 
+		 * 
+		 * Soluzione:
+		 * invece di esporre l'hashmap espongo un oggetto "simile" ma che mi consente solo di scorrere
+		 * questo oggetto si chiama Iterable.
+		 * Passi da seguire:
+		 * 1) rendere privata l'hashmap di Negozio
+		 * 2) scrivere un metodo pubblico di Negozio che restituisce un "iteratore" di prodotti (sintassi "standard")
+		 * 3) nella classe utilizzatrice (es. Main) utilizzare un "for-each" per scorrere tutti i prodotti dell'iteratore
+		 * 
+		 */
+
+		
+		// esempio di utilizzo improprio dell'hashmap (aggiungo un prodotto con codice già esistente)
+		/*
+		negozio.getElencoProdotti().put(
+				"CAS001",
+				new Prodotto("CAS001","XXXXX",87f,20)
+				);
+		*/
+		
+		// esempio di utilizzo improprio dell'hashmap (svuoto l'elenco dei prodotti)
+		//negozio.getElencoProdotti().clear();
+	
+		
+        
 		do {
 			System.out.println("\n\n\n\n\n\n\n\n\n\n\n\nBenvenuto nel mio negozio!");
 			
@@ -57,8 +92,8 @@ public class Main {
 			switch (scelta) {
 			case "1":	//visualizza
 				System.out.println("I prodotti disponibili sono: "); //prodotti inseriti nel costruttore/dichiarazione
-				for (String c:negozio.elencoProdotti.keySet()) {
-					System.out.println(negozio.elencoProdotti.get(c).toString());					
+				for (Prodotto prod:negozio.getElencoProdotti()) {
+					System.out.println(prod.toString());					
 				}
 				break;
 			case "2":	//inserisci
@@ -93,9 +128,9 @@ public class Main {
 				{
 					System.out.print("Inserisci il codice: ");
 					codice=sc.nextLine();
-					if (negozio.elencoProdotti.containsKey(codice)) {					
+					if (negozio.esisteProdotto(codice)) {					
 						Prodotto p;		//dichiaro un oggetto di tipo prodotto
-						p=negozio.elencoProdotti.get(codice);	//restituisce il prodotto con quel codice
+						p=negozio.getProdotto(codice);	//restituisce il prodotto con quel codice
 						System.out.println(p.toString());
 						System.out.print("Inserisci la quantità desiderata: ");
 						quantità=Integer.parseInt(sc.nextLine());
@@ -109,7 +144,7 @@ public class Main {
 							System.out.println("Il tuo carrello:");
 							
 							for (String cod:negozio.getCarrello().getElencoProdotti().keySet()) {
-								Prodotto prodottoNelCarrello=negozio.elencoProdotti.get(cod);	//
+								Prodotto prodottoNelCarrello=negozio.getProdotto(cod);	//
 								quantità=negozio.getCarrello().getElencoProdotti().get(cod);
 								prezzo=(prodottoNelCarrello.getPrezzo()*(100-prodottoNelCarrello.getSconto())/100)*quantità;
 								//mostro per ogni prodotto nel carrello: descrizione, quantità, prezzo (scontato)
@@ -134,9 +169,9 @@ public class Main {
 					//aggiorno la quantità
 					for (String cod:negozio.getCarrello().getElencoProdotti().keySet()) {		//per ogni codice nel carrello
 						quantità=negozio.getCarrello().getElencoProdotti().get(cod);	//recupero la quantità del carrello
-						int quantitàDisponibile=negozio.elencoProdotti.get(cod).getQuantitàDisponibile();	//recupero la quantità del prodotto dal negozio
+						int quantitàDisponibile=negozio.getProdotto(cod).getQuantitàDisponibile();	//recupero la quantità del prodotto dal negozio
 						quantitàDisponibile=quantitàDisponibile-quantità;	//aggiorno la quantità
-						negozio.elencoProdotti.get(cod).setQuantitàDisponibile(quantitàDisponibile);
+						negozio.getProdotto(cod).setQuantitàDisponibile(quantitàDisponibile);
 					}
 				}
 				
