@@ -88,6 +88,7 @@ public class Main {
 					System.out.println("Sconto non applicato");
 				break;
 			case "4":
+				float totaleCarrello=0;
 				do 
 				{
 					System.out.print("Inserisci il codice: ");
@@ -106,15 +107,18 @@ public class Main {
 							System.out.println("Prodotto aggiunto correttamente");
 							//mostro il carrello
 							System.out.println("Il tuo carrello:");
+							
 							for (String cod:negozio.getCarrello().getElencoProdotti().keySet()) {
 								Prodotto prodottoNelCarrello=negozio.elencoProdotti.get(cod);	//
 								quantità=negozio.getCarrello().getElencoProdotti().get(cod);
+								prezzo=(prodottoNelCarrello.getPrezzo()*(100-prodottoNelCarrello.getSconto())/100)*quantità;
 								//mostro per ogni prodotto nel carrello: descrizione, quantità, prezzo (scontato)
 								System.out.println(
 									prodottoNelCarrello.getDescrizione()+ 
 									" - quantità: "+quantità+
 									" - prezzo: "+ 
-									(prodottoNelCarrello.getPrezzo()*(100-prodottoNelCarrello.getSconto())/100)*quantità);
+									prezzo);
+								totaleCarrello+=prezzo;
 							}	
 						}
 					} else
@@ -122,6 +126,19 @@ public class Main {
 					System.out.println("Vuoi acquistare un altro prodotto (s/n)?");
 					risposta=sc.nextLine().toLowerCase();
 				} while (risposta.equals("s"));
+				System.out.println("Totale carrello: "+String.format("%.2f €", totaleCarrello));
+				System.out.println("Vuoi procedere con l'acquisto (s/n)?");
+				risposta=sc.nextLine().toLowerCase();
+				if (risposta.equals("s")) 
+				{
+					//aggiorno la quantità
+					for (String cod:negozio.getCarrello().getElencoProdotti().keySet()) {		//per ogni codice nel carrello
+						quantità=negozio.getCarrello().getElencoProdotti().get(cod);	//recupero la quantità del carrello
+						int quantitàDisponibile=negozio.elencoProdotti.get(cod).getQuantitàDisponibile();	//recupero la quantità del prodotto dal negozio
+						quantitàDisponibile=quantitàDisponibile-quantità;	//aggiorno la quantità
+						negozio.elencoProdotti.get(cod).setQuantitàDisponibile(quantitàDisponibile);
+					}
+				}
 				
 				
 				
