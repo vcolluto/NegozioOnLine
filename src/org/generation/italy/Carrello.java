@@ -9,4 +9,11 @@ public class Carrello {
 	public void aggiungiProdotto(String codice, int quantità) {
 		elencoProdotti.put(codice, quantità);
 	}
+
+
+	public HashMap<String, Integer> getElencoProdotti() {
+		return elencoProdotti;
+	}
+	
+	
 }

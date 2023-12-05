@@ -3,15 +3,19 @@ package org.generation.italy;
 import java.util.HashMap;
 
 
+
 public class Negozio {	
-	public HashMap<String, Prodotto> elencoProdotti= new HashMap<>(){{
+	public HashMap<String, Prodotto> elencoProdotti= new HashMap<String, Prodotto>(){{
 		put("AL001",new Prodotto("AL001","Pane",3.70f,100));
 		put("AL002",new Prodotto("AL002","Pasta",1.50f,200));
 		put("AL003",new Prodotto("AL003","Biscotti",4.20f,10));
 		put("CAS001",new Prodotto("CAS001","Spugne",0.80f,5));
 	}};
 	
+		
 	private Carrello carrello=new Carrello();
+
+	
 
 	//costruttore (situazione iniziale)
 	public Negozio() {
@@ -40,7 +44,7 @@ public class Negozio {
 		{
 		/*	if (elencoProdotti.get(codice).setSconto(sconto))
 				esito=true;*/
-			esito=elencoProdotti.get(codice).setSconto(sconto);
+			esito=elencoProdotti.get(codice).setSconto(sconto); //
 		}
 		
 		return esito;
@@ -56,5 +60,9 @@ public class Negozio {
 			esito=true;
 		}
 		return esito;
+	}
+	
+	public Carrello getCarrello() {
+		return carrello;
 	}
 }

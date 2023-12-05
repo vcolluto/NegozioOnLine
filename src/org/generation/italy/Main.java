@@ -36,9 +36,9 @@ public class Main {
 	
 
 	public static void main(String[] args) {
-		Negozio n=new Negozio();		//chiamo il costruttore (situa iniziale)
+		Negozio negozio=new Negozio();		//chiamo il costruttore (situa iniziale)
 		Scanner sc=new Scanner(System.in);
-		String scelta="", codice, descriz;
+		String scelta="", codice, descriz, risposta;
 		float prezzo, sconto;
 		int quantità;
 		
@@ -49,6 +49,7 @@ public class Main {
 			System.out.println("1 - Visualizza prodotti");
 			System.out.println("2 - Inserisci prodotto");
 			System.out.println("3 - Applica sconto");
+			System.out.println("4 - Acquista prodotti");
 			System.out.println("9 - Esci");
 			System.out.print("\nInserisci la tua scelta: ");
 			scelta=sc.nextLine();
@@ -56,8 +57,8 @@ public class Main {
 			switch (scelta) {
 			case "1":	//visualizza
 				System.out.println("I prodotti disponibili sono: "); //prodotti inseriti nel costruttore/dichiarazione
-				for (String c:n.elencoProdotti.keySet()) {
-					System.out.println(n.elencoProdotti.get(c).toString());					
+				for (String c:negozio.elencoProdotti.keySet()) {
+					System.out.println(negozio.elencoProdotti.get(c).toString());					
 				}
 				break;
 			case "2":	//inserisci
@@ -69,7 +70,7 @@ public class Main {
 				prezzo=Float.parseFloat(sc.nextLine());
 				System.out.print("Inserisci la quantità: ");
 				quantità=Integer.parseInt(sc.nextLine());
-				if (n.inserisciProdotto(new Prodotto(codice,descriz,prezzo,quantità)))
+				if (negozio.inserisciProdotto(new Prodotto(codice,descriz,prezzo,quantità)))
 					System.out.println("Prodotto correttamente inserito");
 				else
 					System.out.println("Prodotto non inserito: codice già esistente!");
@@ -81,10 +82,49 @@ public class Main {
 				sconto=Float.parseFloat(sc.nextLine());
 				
 				//chiamata al metodo "applica sconto"
-				if(n.applicaSconto(codice, sconto))
+				if(negozio.applicaSconto(codice, sconto))
 					System.out.println("Sconto correttamente applicato");
 				else
 					System.out.println("Sconto non applicato");
+				break;
+			case "4":
+				do 
+				{
+					System.out.print("Inserisci il codice: ");
+					codice=sc.nextLine();
+					if (negozio.elencoProdotti.containsKey(codice)) {					
+						Prodotto p;		//dichiaro un oggetto di tipo prodotto
+						p=negozio.elencoProdotti.get(codice);	//restituisce il prodotto con quel codice
+						System.out.println(p.toString());
+						System.out.print("Inserisci la quantità desiderata: ");
+						quantità=Integer.parseInt(sc.nextLine());
+						if (quantità>p.getQuantitàDisponibile())
+							System.out.println("Quantità disponibile insufficiente!");
+						else
+						{
+							negozio.getCarrello().aggiungiProdotto(codice, quantità);
+							System.out.println("Prodotto aggiunto correttamente");
+							//mostro il carrello
+							System.out.println("Il tuo carrello:");
+							for (String cod:negozio.getCarrello().getElencoProdotti().keySet()) {
+								Prodotto prodottoNelCarrello=negozio.elencoProdotti.get(cod);	//
+								quantità=negozio.getCarrello().getElencoProdotti().get(cod);
+								//mostro per ogni prodotto nel carrello: descrizione, quantità, prezzo (scontato)
+								System.out.println(
+									prodottoNelCarrello.getDescrizione()+ 
+									" - quantità: "+quantità+
+									" - prezzo: "+ 
+									(prodottoNelCarrello.getPrezzo()*(100-prodottoNelCarrello.getSconto())/100)*quantità);
+							}	
+						}
+					} else
+						System.out.println("Prodotto non esistente!");
+					System.out.println("Vuoi acquistare un altro prodotto (s/n)?");
+					risposta=sc.nextLine().toLowerCase();
+				} while (risposta.equals("s"));
+				
+				
+				
 				break;
 			case "9":
 				System.out.println("Arrivederci!");
@@ -104,17 +144,7 @@ public class Main {
 		
 	
 		
-		n.inserisciProdotto(new Prodotto("CAS003","Scopa",5f,10));  ; //prodotto aggiunto a quelli esistenti
-		
-		if(!n.inserisciProdotto(new Prodotto("CAS003","Pettine",1f,10)))  ; //codice già esistente! => prodotto non aggiunto
-			System.out.println("Codice già esistente!");
-
-		System.out.println("Dopo l'aggiunta i prodotti disponibili sono: ");
-		for (String c:n.elencoProdotti.keySet()) {
-			System.out.println(n.elencoProdotti.get(c).getCodice());
-			System.out.println(n.elencoProdotti.get(c).getDescrizione());
-			System.out.println("\n");
-		}
+		sc.close();
 		
 		
 	
