@@ -69,13 +69,8 @@ public class Negozio {
 		return carrello;
 	}
 
-	public Iterable<Prodotto> getElencoProdotti() {	//non restituisco direttamente l'hasmap, ma un "iteratore di prodotti"
-		return new Iterable<Prodotto>() {			
-			@Override
-			public Iterator<Prodotto> iterator() {				
-				return elencoProdotti.values().iterator();
-			}
-		};
+	public Iterable<Prodotto> getElencoProdotti() {	//non restituisco direttamente l'hasmap, ma un "iteratore di prodotti"		
+		return elencoProdotti.values();
 	}
 	
 	public boolean esisteProdotto(String codice) {
