@@ -66,13 +66,14 @@ public class Prodotto {
 			this.quantitàDisponibile = quantitàDisponibile;
 	}
 
-	@Override
+
+	@Override		//sovrascrivi il toString() di Object
 	public String toString() {		//genera una stringa contenente tutti i dati del prodotto
 		return "Prodotto [codice=" + codice + ", descrizione=" + descrizione + ", prezzo=" + prezzo + ", sconto="
 				+ sconto + ", quantitàDisponibile=" + quantitàDisponibile + "]";
 	}
 	
-	
+
 	
 	
 	
