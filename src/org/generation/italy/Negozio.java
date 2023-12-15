@@ -6,6 +6,7 @@ import java.util.Iterator;
 
 
 public class Negozio {	
+	private GestoreUtenti gestoreUtenti=new GestoreUtenti();
 	
 	private HashMap<String, Prodotto> elencoProdotti= new HashMap<String, Prodotto>(){{
 		put("AL001",new Prodotto("AL001","Pane",3.70f,100));
@@ -79,6 +80,10 @@ public class Negozio {
 	
 	public Prodotto getProdotto(String codice) {
 		return elencoProdotti.get(codice);
+	}
+
+	public GestoreUtenti getGestoreUtenti() {
+		return gestoreUtenti;
 	}
 	
 	

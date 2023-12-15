@@ -32,11 +32,23 @@ Main
 package org.generation.italy;
 import java.util.Scanner;
 
+import org.genration.italy.model.Account;
+import org.genration.italy.model.Amministratore;
+import org.genration.italy.model.Utente;
+
 public class Main {
 	
 
 	public static void main(String[] args) {
 		Negozio negozio=new Negozio();		//chiamo il costruttore (situa iniziale)
+		
+		negozio.getGestoreUtenti().aggiungiUtente(
+				"enzo", 
+				new Amministratore("enzo", "12345", "Enzo", "Colluto", 43232));
+		negozio.getGestoreUtenti().aggiungiUtente(
+				"pino", 
+				new Utente("pino", "54234", "Pino", "Verdi", "2/4/2020","43243423324"));
+		
 		Scanner sc=new Scanner(System.in);
 		String scelta="", codice, descriz, risposta;
 		float prezzo, sconto;
@@ -77,119 +89,142 @@ public class Main {
 		// esempio di utilizzo improprio dell'hashmap (svuoto l'elenco dei prodotti)
 		//negozio.getElencoProdotti().clear();
 	
+		System.out.print("Inserisci username: ");
+		String userName=sc.nextLine();
+		System.out.print("Inserisci password: ");
+		String password=sc.nextLine();
 		
-        
-		do {
-			System.out.println("\n\n\n\n\n\n\n\n\n\n\n\nBenvenuto nel mio negozio!");
-			
-			System.out.println("1 - Visualizza prodotti");
-			System.out.println("2 - Inserisci prodotto");
-			System.out.println("3 - Applica sconto");
-			System.out.println("4 - Acquista prodotti");
-			System.out.println("9 - Esci");
-			System.out.print("\nInserisci la tua scelta: ");
-			scelta=sc.nextLine();
-			
-			switch (scelta) {
-			case "1":	//visualizza
-				System.out.println("I prodotti disponibili sono: "); //prodotti inseriti nel costruttore/dichiarazione
-				for (Prodotto prod:negozio.getElencoProdotti()) {
-					System.out.println(prod.toString());					
-				}
-				break;
-			case "2":	//inserisci
-				System.out.print("Inserisci il codice: ");
-				codice=sc.nextLine();
-				System.out.print("Inserisci la descrizione: ");
-				descriz=sc.nextLine();
-				System.out.print("Inserisci il prezzo: ");
-				prezzo=Float.parseFloat(sc.nextLine());
-				System.out.print("Inserisci la quantità: ");
-				quantità=Integer.parseInt(sc.nextLine());
-				if (negozio.inserisciProdotto(new Prodotto(codice,descriz,prezzo,quantità)))
-					System.out.println("Prodotto correttamente inserito");
-				else
-					System.out.println("Prodotto non inserito: codice già esistente!");
-				break;
-			case "3":	//applica sconto
-				System.out.print("Inserisci il codice: ");
-				codice=sc.nextLine();
-				System.out.print("Inserisci lo sconto da applicare: ");
-				sconto=Float.parseFloat(sc.nextLine());
+		Account account=negozio.getGestoreUtenti().loginUtente(userName, password);
+		if (account==null)
+			System.out.println("Credenziali non valide!");
+		else
+		{
+			do {
 				
-				//chiamata al metodo "applica sconto"
-				if(negozio.applicaSconto(codice, sconto))
-					System.out.println("Sconto correttamente applicato");
-				else
-					System.out.println("Sconto non applicato");
-				break;
-			case "4":
-				float totaleCarrello=0;
-				do 
+				System.out.println("\n\n\n\n\n\n\n\n\n\n\n\nBenvenuto "+
+						account.getNome()+ " "+account.getCognome());
+				
+				if (account instanceof Amministratore) {
+					System.out.println("1 - Visualizza prodotti");
+					System.out.println("2 - Inserisci prodotto");
+					System.out.println("3 - Applica sconto");
+					System.out.println("9 - Esci");
+				} else {	//utente normale
+					System.out.println("1 - Visualizza prodotti");	
+					System.out.println("4 - Acquista prodotti");
+					System.out.println("9 - Esci");
+				}
+				
+				
+				System.out.print("\nInserisci la tua scelta: ");
+				scelta=sc.nextLine();
+				if (checkPermesso(account, scelta))
 				{
-					System.out.print("Inserisci il codice: ");
-					codice=sc.nextLine();
-					if (negozio.esisteProdotto(codice)) {					
-						Prodotto p;		//dichiaro un oggetto di tipo prodotto
-						p=negozio.getProdotto(codice);	//restituisce il prodotto con quel codice
-						System.out.println(p.toString());
-						System.out.print("Inserisci la quantità desiderata: ");
-						quantità=Integer.parseInt(sc.nextLine());
-						if (quantità>p.getQuantitàDisponibile())
-							System.out.println("Quantità disponibile insufficiente!");
-						else
-						{
-							negozio.getCarrello().aggiungiProdotto(codice, quantità);
-							System.out.println("Prodotto aggiunto correttamente");
-							//mostro il carrello
-							System.out.println("Il tuo carrello:");
-							
-							for (String cod:negozio.getCarrello().getElencoProdotti().keySet()) {
-								Prodotto prodottoNelCarrello=negozio.getProdotto(cod);	//
-								quantità=negozio.getCarrello().getElencoProdotti().get(cod);
-								prezzo=(prodottoNelCarrello.getPrezzo()*(100-prodottoNelCarrello.getSconto())/100)*quantità;
-								//mostro per ogni prodotto nel carrello: descrizione, quantità, prezzo (scontato)
-								System.out.println(
-									prodottoNelCarrello.getDescrizione()+ 
-									" - quantità: "+quantità+
-									" - prezzo: "+ 
-									prezzo);
-								totaleCarrello+=prezzo;
-							}	
+					switch (scelta) {
+					case "1":	//visualizza
+						System.out.println("I prodotti disponibili sono: "); //prodotti inseriti nel costruttore/dichiarazione
+						for (Prodotto prod:negozio.getElencoProdotti()) {
+							System.out.println(prod.toString());					
 						}
-					} else
-						System.out.println("Prodotto non esistente!");
-					System.out.println("Vuoi acquistare un altro prodotto (s/n)?");
-					risposta=sc.nextLine().toLowerCase();
-				} while (risposta.equals("s"));
-				System.out.println("Totale carrello: "+String.format("%.2f €", totaleCarrello));
-				System.out.println("Vuoi procedere con l'acquisto (s/n)?");
-				risposta=sc.nextLine().toLowerCase();
-				if (risposta.equals("s")) 
-				{
-					//aggiorno la quantità
-					for (String cod:negozio.getCarrello().getElencoProdotti().keySet()) {		//per ogni codice nel carrello
-						quantità=negozio.getCarrello().getElencoProdotti().get(cod);	//recupero la quantità del carrello
-						int quantitàDisponibile=negozio.getProdotto(cod).getQuantitàDisponibile();	//recupero la quantità del prodotto dal negozio
-						quantitàDisponibile=quantitàDisponibile-quantità;	//aggiorno la quantità
-						negozio.getProdotto(cod).setQuantitàDisponibile(quantitàDisponibile);
+						break;
+					case "2":	//inserisci
+						System.out.print("Inserisci il codice: ");
+						codice=sc.nextLine();
+						System.out.print("Inserisci la descrizione: ");
+						descriz=sc.nextLine();
+						System.out.print("Inserisci il prezzo: ");
+						prezzo=Float.parseFloat(sc.nextLine());
+						System.out.print("Inserisci la quantità: ");
+						quantità=Integer.parseInt(sc.nextLine());
+						if (negozio.inserisciProdotto(new Prodotto(codice,descriz,prezzo,quantità)))
+							System.out.println("Prodotto correttamente inserito");
+						else
+							System.out.println("Prodotto non inserito: codice già esistente!");
+						break;
+					case "3":	//applica sconto
+						System.out.print("Inserisci il codice: ");
+						codice=sc.nextLine();
+						System.out.print("Inserisci lo sconto da applicare: ");
+						sconto=Float.parseFloat(sc.nextLine());
+						
+						//chiamata al metodo "applica sconto"
+						if(negozio.applicaSconto(codice, sconto))
+							System.out.println("Sconto correttamente applicato");
+						else
+							System.out.println("Sconto non applicato");
+						break;
+					case "4":
+						float totaleCarrello=0;
+						do 
+						{
+							System.out.print("Inserisci il codice: ");
+							codice=sc.nextLine();
+							if (negozio.esisteProdotto(codice)) {					
+								Prodotto p;		//dichiaro un oggetto di tipo prodotto
+								p=negozio.getProdotto(codice);	//restituisce il prodotto con quel codice
+								System.out.println(p.toString());
+								System.out.print("Inserisci la quantità desiderata: ");
+								quantità=Integer.parseInt(sc.nextLine());
+								if (quantità>p.getQuantitàDisponibile())
+									System.out.println("Quantità disponibile insufficiente!");
+								else
+								{
+									negozio.getCarrello().aggiungiProdotto(codice, quantità);
+									System.out.println("Prodotto aggiunto correttamente");
+									//mostro il carrello
+									System.out.println("Il tuo carrello:");
+									
+									for (String cod:negozio.getCarrello().getElencoProdotti().keySet()) {
+										Prodotto prodottoNelCarrello=negozio.getProdotto(cod);	//
+										quantità=negozio.getCarrello().getElencoProdotti().get(cod);
+										prezzo=(prodottoNelCarrello.getPrezzo()*(100-prodottoNelCarrello.getSconto())/100)*quantità;
+										//mostro per ogni prodotto nel carrello: descrizione, quantità, prezzo (scontato)
+										System.out.println(
+											prodottoNelCarrello.getDescrizione()+ 
+											" - quantità: "+quantità+
+											" - prezzo: "+ 
+											prezzo);
+										totaleCarrello+=prezzo;
+									}	
+								}
+							} else
+								System.out.println("Prodotto non esistente!");
+							System.out.println("Vuoi acquistare un altro prodotto (s/n)?");
+							risposta=sc.nextLine().toLowerCase();
+						} while (risposta.equals("s"));
+						System.out.println("Totale carrello: "+String.format("%.2f €", totaleCarrello));
+						System.out.println("Vuoi procedere con l'acquisto (s/n)?");
+						risposta=sc.nextLine().toLowerCase();
+						if (risposta.equals("s")) 
+						{
+							//aggiorno la quantità
+							for (String cod:negozio.getCarrello().getElencoProdotti().keySet()) {		//per ogni codice nel carrello
+								quantità=negozio.getCarrello().getElencoProdotti().get(cod);	//recupero la quantità del carrello
+								int quantitàDisponibile=negozio.getProdotto(cod).getQuantitàDisponibile();	//recupero la quantità del prodotto dal negozio
+								quantitàDisponibile=quantitàDisponibile-quantità;	//aggiorno la quantità
+								negozio.getProdotto(cod).setQuantitàDisponibile(quantitàDisponibile);
+							}
+						}
+						
+						
+						
+						break;
+					case "9":
+						System.out.println("Arrivederci!");
+						break;
+					default:
+						System.out.println("Scelta non valida!");
+						break;
 					}
-				}
+				} else
+					System.out.println("Scelta non valida!");
 				
+				System.out.println("Premi Enter per continuare...");
+				sc.nextLine();
 				
-				
-				break;
-			case "9":
-				System.out.println("Arrivederci!");
-				break;
-			default:
-				System.out.println("Scelta non valida!");
-				break;
-			}
-			System.out.println("Premi Enter per continuare...");
-			sc.nextLine();
-			
-		} while (!scelta.equals("9"));
+			} while (!scelta.equals("9"));
+		}
+		
 
 		
 		
@@ -204,6 +239,19 @@ public class Main {
 			
 	}
 
+	
+	static boolean checkPermesso(Account account, String scelta) {
+		if (account instanceof Amministratore && 
+			(scelta.equals("1") || scelta.equals("2") ||
+			scelta.equals("3") || scelta.equals("9")))
+			return true;
+		else if	(account instanceof Utente && 
+			(scelta.equals("1") || scelta.equals("4") ||
+			 scelta.equals("9")))
+			return true;	
+		else 
+			return false;
+	}
 	
 	
 }
